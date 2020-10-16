@@ -2,26 +2,20 @@
 import numpy as np
 import get_data
 import matplotlib.pyplot as plt
-dir = 'datasets/CIFAR10/data_batch_'
-dir_test = 'datasets/CIFAR10/test_batch'
-xs = []
-ys = []
+dir = {}
+X = {}
+y = {}
+dir['train'] = 'datasets/CIFAR10/data_batch_'
+dir['test'] = 'datasets/CIFAR10/test_batch'
 
-for i in np.arange(5):
-    dict = get_data.load_data( dir + str(i+1))
-    X_temp = dict['data']
-    X_temp = X_temp.reshape(10000, 3, 32, 32)
-    xs.append(X_temp)
-    y_temp = dict['labels']
-    ys.append(y_temp)
-X_train = np.concatenate(xs)
-y_train = np.concatenate(ys)
-dict = get_data.load_data(dir_test)
-X_temp = dict['data']
-X_test = X_temp.reshape(10000, 3, 32, 32)
-y_t = dict['labels']
-y_test = np.array(y_temp)
-print(type(y_test))
+for i in dir.keys():
+    X[i], y[i] = get_data.get_image(dir[i], mode=i)
+
+X_train = X['train']
+y_train = y['train']
+X_test = X['test']
+y_test = y['test']
+del X, y
 print(X_train.shape)
 print(y_train.shape)
 print(X_test.shape)
