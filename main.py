@@ -45,10 +45,10 @@ for i in np.arange(row):
         example_x = X_train[indx - 1, :, :, :].transpose(1, 2, 0)
         plt.subplot(row, col, indx)
         plt.imshow(example_x)
-plt.show()
+# plt.show()
 
 ###################### Preprocess the data #########################
-# -> Divide the data into train, validation and test sets
+' -> Divide the data into train, validation and test sets'
 num_train = 40000
 num_val = 10000
 num_class = 10
@@ -59,19 +59,20 @@ mask = list(np.arange(num_val, num_train + num_val))
 X_train = X_train[mask]
 y_train = y_train[mask]
 
-# -> Substract the mean from every feature
+' -> Substract the mean from every feature'
 mean = np.mean(X_train, axis=0)
 X_train = X_train - mean
 X_test = X_test - mean
 X_val = X_val - mean
 del mean
 
-# -> Flatten the image from 4-D data to 2-D data as an input to the network
+'# -> Flatten the image from 4-D data to 2-D data as an input to the network'
 X_train = X_train.reshape((num_train, -1))
 X_val = X_val.reshape((num_val, -1))
 X_test = X_test.reshape((X_test.shape[0], -1))
 ######################################################################
 import FCNets
+loss_history = []
 H = 100
 D = X_train.shape[1]
 C = num_class
@@ -79,5 +80,16 @@ FCnetwork = FCNets.FCNets(D, H, C)
 mask = list(np.arange(10))
 X_mini = X_train[mask]
 y_mini = y_train[mask]
+for i in np.arange(100):
+    loss = FCnetwork.loss(X_mini, y_mini)
+    print('loss is', loss)
+    loss_history.append(loss)
+    FCnetwork.update(learning_rate=1e-3)
 loss = FCnetwork.loss(X_mini, y_mini)
-print('loss is', loss)
+print('Final loss is', loss)
+plt.figure()
+plt.title('Loss history')
+plt.xlabel('Update')
+plt.ylabel('loss')
+plt.plot(loss_history)
+plt.show()
