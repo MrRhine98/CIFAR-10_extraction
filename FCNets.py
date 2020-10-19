@@ -4,7 +4,6 @@ from Layer import *
 class FCNets(object):
     def __init__(self, input_size, hidden_size, output_size, std=1e-4):
         self.parameter = {}
-        self.grad = {}
         self.parameter['W1'] = std * np.random.randn(input_size, hidden_size)
         self.parameter['b1'] = np.zeros(hidden_size)
         self.parameter['W2'] = std * np.random.randn(hidden_size, output_size)
@@ -15,6 +14,7 @@ class FCNets(object):
         b1 = self.parameter['b1']
         W2 = self.parameter['W2']
         b2 = self.parameter['b2']
+        grad = {}
 
         N = X.shape[0]
         D = X.shape[1]
@@ -27,13 +27,10 @@ class FCNets(object):
         loss, dscores = softmax_loss(scores, y)
         loss += reg / 2 * (np.sum(W1*W1) + np.sum(W2*W2))
 
-        drelu1, self.grad['W2'], self.grad['b2'] = affine_backward(dscores, scores_cache)
+        drelu1, grad['W2'], grad['b2'] = affine_backward(dscores, scores_cache)
         dlayer1 = relu_backward(drelu1, relu1_cache)
-        dx, self.grad['W1'], self.grad['b1'] = affine_backward(dlayer1, layer1_cache)
-        return loss
+        dx, grad['W1'], grad['b1'] = affine_backward(dlayer1, layer1_cache)
+        return loss, grad
 
-    def update(self, learning_rate):
-        for para in self.parameter.keys():
-            self.parameter[para] += -learning_rate * self.grad[para]
 
 

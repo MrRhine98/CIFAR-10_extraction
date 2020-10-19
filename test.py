@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
-X = np.ones((2, 2)).reshape(-1)
-print(X)
+epoch = 10
+iter = 9
+loss = 90
+print('Epoch %d, iter %d' %(epoch+1, iter+1), loss)

@@ -3,9 +3,8 @@
 # d6dd12a487474cde166bccc484bd5acbccbf1bb2  token
 
 ##################### Some setup####################################
-import numpy as np
 import get_data
-import matplotlib.pyplot as plt
+from Solver import *
 dir = {}
 
 ################### extract data from CIFAR-10######################
@@ -66,17 +65,32 @@ X_test = X_test - mean
 X_val = X_val - mean
 del mean
 
-'# -> Flatten the image from 4-D data to 2-D data as an input to the network'
+' -> Flatten the image from 4-D data to 2-D data as an input to the network'
 X_train = X_train.reshape((num_train, -1))
 X_val = X_val.reshape((num_val, -1))
 X_test = X_test.reshape((X_test.shape[0], -1))
-######################################################################
+
+' -> Package the data in a dictionary data{}'
+data = {}
+data['X_train'] = X_train       # (40000, 3072)
+data['X_test'] = X_test         # (10000, 3072)
+data['X_val'] = X_val           # (10000, 3072)
+data['y_train'] = y_train       # (40000, )
+data['y_test'] = y_test         # (10000, )
+data['y_val'] = y_val           # (10000, )
+
+
+#################### load the model and overfit #########################
 import FCNets
 loss_history = []
 H = 100
 D = X_train.shape[1]
 C = num_class
 FCnetwork = FCNets.FCNets(D, H, C)
+
+Solver = solver(FCnetwork, data, num_epoch=3)
+Solver.train()
+'''
 mask = list(np.arange(10))
 X_mini = X_train[mask]
 y_mini = y_train[mask]
@@ -87,9 +101,9 @@ for i in np.arange(100):
     FCnetwork.update(learning_rate=1e-3)
 loss = FCnetwork.loss(X_mini, y_mini)
 print('Final loss is', loss)
-plt.figure()
-plt.title('Loss history')
+plt.figureplt.title('Loss history')
 plt.xlabel('Update')
 plt.ylabel('loss')
 plt.plot(loss_history)
 plt.show()
+'''
