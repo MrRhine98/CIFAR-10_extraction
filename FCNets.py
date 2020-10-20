@@ -32,5 +32,15 @@ class FCNets(object):
         dx, grad['W1'], grad['b1'] = affine_backward(dlayer1, layer1_cache)
         return loss, grad
 
+    def predict(self, X):
+        W1 = self.parameter['W1']
+        b1 = self.parameter['b1']
+        W2 = self.parameter['W2']
+        b2 = self.parameter['b2']
+        layer1, _ = affine_forward(X, W1, b1)
+        relu1, _ = relu_forward(layer1)
+        scores, _ = affine_forward(relu1, W2, b2)
+        y_pred = np.argmax(scores, axis=1)
+        return y_pred
 
 
